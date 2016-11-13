@@ -47,15 +47,18 @@ typedef struct
 }
 malloc_entry_h;
 
+#define MIN_INITIAL_MALLOC_BUFFER_SIZE  4096    // bytes
 Malloc_Ctx* Malloc_init(size_t szPage, size_t nSystemTotalPages)
 {
+    int nBytesRequired = sizeof(Malloc_Ctx) + sizeof(malloc_entry_h) + (1 + (nSystemTotalPages - 1) / (8*sizeof(uintreg_t))) * sizeof(uintreg_t) + MIN_INITIAL_MALLOC_BUFFER_SIZE;
+    
     page_property prop;
     prop.required.present = true;
     prop.required.read = true;
     prop.required.write = true;
     prop.required.run = false;
     prop.required.priviliged = false;
-    uintptr_t pbuf = (uintptr_t)mmap((void*)0, szPage, &prop);
+    uintptr_t pbuf = (uintptr_t)mmap((void*)0, nBytesRequired, &prop);
 
     Malloc_Ctx* ctx = (Malloc_Ctx*)pbuf;
     pbuf += sizeof(Malloc_Ctx);
