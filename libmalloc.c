@@ -167,7 +167,7 @@ void* MM_malloc(size_t size, Malloc_Ctx* ctx)
 
             for (int i=0; i<ctx->nEntries; i++)
             {
-                if (!isEntryFree(pEntry)) continue;
+                if (!isEntryFree(pEntry)) { pEntry = (malloc_entry_h*) (((uintptr_t)pEntry) + pEntry->size); continue; }
 
                 // this is free
                 // check if next chunk is free, do merge
